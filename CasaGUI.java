@@ -24,7 +24,6 @@ public class CasaGUI extends JButton {
     
     // Icones das pecas
     private static final Icon PEAO_BRANCO = new ImageIcon("imagens/peao_branco.png");
-    private static final Icon PARSE = new ImageIcon("imagens/parse.py");
     private static final Icon PEAO_PRETO = new ImageIcon("imagens/peao_preto.png");
     private static final Icon TORRE_PRETA = new ImageIcon("imagens/torre_preta.png");
     private static final Icon BISPO_BRANCO = new ImageIcon("imagens/bispo_branco.png");
@@ -138,15 +137,6 @@ public class CasaGUI extends JButton {
         Class<?> c = icone.getClass(); 
         for (Field field : c.getDeclaredFields()){ 
             NOME = field.getName();
-            /***
-           try { 
-                NOME = field.getName(); 
-            } 
-           catch (IllegalAccessException e){ 
-                e.printStackTrace(); 
-            } 
-              
-            ***/
         } 
         
         if (NOME.contains("BRANCA") || NOME.contains("BRANCO")){

@@ -1,3 +1,5 @@
+import javax.swing.JOptionPane;
+
 /**
  * Representa uma Pe�a do jogo.
  * Possui uma casa e um tipo associado.
