@@ -1,4 +1,4 @@
-
+import java.lang.Math;
 /**
  * Armazena o tabuleiro e responsavel por posicionar as pecas.
  * 
@@ -125,11 +125,54 @@ public class Jogo {
      * @param destinoX linha da Casa de destino.
      * @param destinoY coluna da Casa de destino.
      */
+
+    // Fazer as verificações de movimento dentro do moverPeça
     public void moverPeca(int origemX, int origemY, int destinoX, int destinoY) {
         Casa origem = tabuleiro.getCasa(origemX, origemY);
         Casa destino = tabuleiro.getCasa(destinoX, destinoY);
         Peca peca = origem.getPeca();
-        peca.mover(destino);
+        if(valido(origemX, origemY, destinoX, destinoY, peca)){
+            peca.mover(destino);
+        }
+    }
+
+    public boolean valido(int origemX, int origemY, int destinoX, int destinoY, Peca peca) {
+        boolean isValid;
+        double distance = Math.sqrt((origemY - destinoY) * (origemY - destinoY) + 
+                                    (origemX - destinoX) * (origemX - destinoX));
+
+        switch(peca.getTipo()){
+            case Peca.CAVALO_BRANCO:
+            case Peca.CAVALO_PRETO:
+                isValid = distance == Math.sqrt(5);
+                break;
+            case Peca.REI_PRETO:
+            case Peca.REI_BRANCO:
+                isValid = distance == 1 || distance == Math.sqrt(2);
+                break;
+            case Peca.TORRE_BRANCA:
+            case Peca.TORRE_PRETA:
+                isValid = distance % 1 == 0;
+                break;
+            case Peca.BISPO_BRANCO:
+            case Peca.BISPO_PRETO:
+                isValid = Math.abs(origemX - destinoX) == Math.abs(origemY - destinoY);
+                break;
+            case Peca.RAINHA_BRANCA: 
+            case Peca.RAINHA_PRETA:
+                isValid = distance % 1 == 0 || Math.abs(origemX - destinoX) == Math.abs(origemY - destinoY);
+                break;
+            case Peca.PEAO_BRANCO:
+                isValid = distance == 1 && origemY < destinoY && origemX == destinoX;
+                break;
+            case Peca.PEAO_PRETO:
+                isValid = distance == 1 && origemY > destinoY && origemX == destinoX;
+                break;
+            default:
+                isValid=true;
+        }
+
+        return isValid;
     }
     
     /**
