@@ -127,21 +127,48 @@ public class Jogo {
      */
 
     // Fazer as verificações de movimento dentro do moverPeça
-    public void moverPeca(int origemX, int origemY, int destinoX, int destinoY, boolean pecasDiferentes) {
+    public void moverPeca(int origemX, int origemY, int destinoX, int destinoY) {
         Casa origem = tabuleiro.getCasa(origemX, origemY);
         Casa destino = tabuleiro.getCasa(destinoX, destinoY);
         Peca peca = origem.getPeca();
-        if(pecasDiferentes && valido(origemX, origemY, destinoX, destinoY, peca)){
+        if (valido(origemX, origemY, destinoX, destinoY, peca)){
             peca.mover(destino);
         }
     }
 
+    public void consumirPeca(int origemX, int origemY, int destinoX, int destinoY, boolean pecasDiferentes) {
+        Casa origem = tabuleiro.getCasa(origemX, origemY);
+        Casa destino = tabuleiro.getCasa(destinoX, destinoY);
+        Peca peca = origem.getPeca();
+        if (pecasDiferentes && podeConsumir(origemX, origemY, destinoX, destinoY, peca)) {
+            peca.mover(destino);
+        }
+    }
+
+    public boolean podeConsumir(int origemX, int origemY, int destinoX, int destinoY, Peca peca) {
+        boolean podeConsumir;
+        double distance = Math.sqrt((origemY - destinoY) * (origemY - destinoY) +
+                                     (origemX - destinoX) * (origemX - destinoX));
+        switch (peca.getTipo()) {
+            case Peca.PEAO_BRANCO:
+                podeConsumir = distance == Math.sqrt(2) && destinoY > origemY;
+                break;
+            case Peca.PEAO_PRETO:
+                podeConsumir = distance == Math.sqrt(2) && destinoY < origemY;
+                break;
+            default:
+                podeConsumir = valido(origemX, origemY, destinoX, destinoY, peca);
+        }
+
+        return podeConsumir;
+    }
+
     public boolean valido(int origemX, int origemY, int destinoX, int destinoY, Peca peca) {
-        boolean isValid;
+        boolean isValid = true;
         double distance = Math.sqrt((origemY - destinoY) * (origemY - destinoY) + 
                                     (origemX - destinoX) * (origemX - destinoX));
 
-        switch(peca.getTipo()){
+        switch (peca.getTipo()) {
             case Peca.CAVALO_BRANCO:
             case Peca.CAVALO_PRETO:
                 isValid = distance == Math.sqrt(5);
@@ -152,27 +179,103 @@ public class Jogo {
                 break;
             case Peca.TORRE_BRANCA:
             case Peca.TORRE_PRETA:
-                isValid = distance % 1 == 0;
+                isValid = (origemX == destinoX || origemY == destinoY) && caminhoLivre(origemX, origemY, destinoX, destinoY, peca);
                 break;
             case Peca.BISPO_BRANCO:
             case Peca.BISPO_PRETO:
-                isValid = Math.abs(origemX - destinoX) == Math.abs(origemY - destinoY);
+                isValid = Math.abs(origemX - destinoX) == Math.abs(origemY - destinoY) && caminhoLivre(origemX, origemY, destinoX, destinoY, peca);
                 break;
             case Peca.RAINHA_BRANCA: 
             case Peca.RAINHA_PRETA:
-                isValid = distance % 1 == 0 || Math.abs(origemX - destinoX) == Math.abs(origemY - destinoY);
+                isValid = caminhoLivre(origemX, origemY, destinoX, destinoY, peca) && (
+                    origemX == destinoX || origemY == destinoY || Math.abs(origemX - destinoX) == Math.abs(origemY - destinoY)
+                    );
                 break;
             case Peca.PEAO_BRANCO:
-                isValid = distance == 1 && origemY < destinoY && origemX == destinoX;
+                isValid =  origemY < destinoY && (
+                    distance == 1 || distance == 2 && origemY == 1 && caminhoLivre(origemX, origemY, destinoX, destinoY, peca)
+                    );
                 break;
             case Peca.PEAO_PRETO:
-                isValid = distance == 1 && origemY > destinoY && origemX == destinoX;
+                isValid = origemY > destinoY && (
+                    distance == 1 || distance == 2 && origemY == 6 && caminhoLivre(origemX, origemY, destinoX, destinoY, peca)
+                );
                 break;
-            default:
-                isValid=true;
         }
 
         return isValid;
+    }
+
+    public boolean caminhoLivre(int origemX, int origemY, int destinoX, int destinoY, Peca peca) {
+        boolean caminhoLivre = true;
+        switch (peca.getTipo()) {
+            case Peca.BISPO_BRANCO:
+            case Peca.BISPO_PRETO:
+                if (Math.abs(destinoX - origemX) > 1) {
+                    int tan = (destinoY - origemY)/(destinoX - origemX);
+                    int sign = Integer.signum(destinoX - origemX);
+                    for (int i = 1; i < Math.abs(destinoX - origemX); i++) {
+                        if (tabuleiro.getCasa(origemX + i*sign, origemY + tan*i*sign).possuiPeca()) {
+                            caminhoLivre = false;
+                            break;
+                        }
+                    }
+                }
+                break;
+            case Peca.PEAO_BRANCO:
+            case Peca.PEAO_PRETO:
+            case Peca.TORRE_BRANCA:
+            case Peca.TORRE_PRETA:
+                if (Math.abs(destinoY - origemY) > 1) {
+                    int sign = Integer.signum(destinoY - origemY);
+                    for (int i = 1; i < Math.abs(destinoY - origemY); i++) {
+                        if (tabuleiro.getCasa(origemX, origemY + i*sign).possuiPeca()) {
+                            caminhoLivre = false;
+                            break;
+                        }
+                    }
+                } else if (Math.abs(destinoX - origemX) > 1) {
+                    int sign = Integer.signum(destinoX - origemX);
+                    for (int i = 1; i < Math.abs(destinoX - origemX); i++) {
+                        if (tabuleiro.getCasa(origemX + i*sign, origemY).possuiPeca()) {
+                            caminhoLivre = false;
+                            break;
+                        }
+                    }
+                }
+                break;
+            case Peca.RAINHA_BRANCA:
+            case Peca.RAINHA_PRETA:
+                if (origemX == destinoX && Math.abs(destinoY - origemY) > 1) {
+                    int sign = Integer.signum(destinoY - origemY);
+                    for (int i = 1; i < Math.abs(destinoY - origemY); i++) {
+                        if (tabuleiro.getCasa(origemX, origemY + i*sign).possuiPeca()) {
+                            caminhoLivre = false;
+                            break;
+                        }
+                    } 
+                } else if (origemY == destinoY && Math.abs(destinoX - origemX) > 1) {
+                    int sign = Integer.signum(destinoX - origemX);
+                    for (int i = 1; i < Math.abs(destinoX - origemX); i++) {
+                        if (tabuleiro.getCasa(origemX + i*sign, origemY).possuiPeca()) {
+                            caminhoLivre = false;
+                            break;
+                        }
+                    }
+                } else if (Math.abs(destinoY - origemY) > 1) {
+                    int tan = (destinoY - origemY)/(destinoX - origemX);
+                    int sign = Integer.signum(destinoX - origemX);
+                    for (int i = 1; i < Math.abs(destinoX - origemX); i++) {
+                        if (tabuleiro.getCasa(origemX + i*sign, origemY + tan*i*sign).possuiPeca()) {
+                            caminhoLivre = false;
+                            break;
+                        }
+                    }
+                }
+                break;
+        }
+
+        return caminhoLivre;
     }
     
     /**
