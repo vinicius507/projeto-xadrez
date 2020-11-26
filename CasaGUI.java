@@ -131,23 +131,16 @@ public class CasaGUI extends JButton {
     }
     
     public int getCorPeca() {
-        Icon icone = getIcon();
-        String NOME = null;
-        
-        Class<?> c = icone.getClass(); 
-        for (Field field : c.getDeclaredFields()){ 
-            NOME = field.getName();
-        } 
-        
-        if (NOME.contains("BRANCA") || NOME.contains("BRANCO")){
-            return PECA_BRANCA;
+        if (this.possuiPeca()) {
+            Icon icone = getIcon();
+            String PECA = icone.toString();
+            if (PECA.contains("branca") || PECA.contains("branco")){
+                return PECA_BRANCA;
+            } else if (PECA.contains("preta") || PECA.contains("preto")) {
+                return PECA_PRETA;
+            }
         }
-        else if (NOME.contains("PRETA") || NOME.contains("PRETO")) {
-             return PECA_PRETA;
-        }
-        else {
-            return SEM_PECA;
-        }
+        return SEM_PECA;
     }
     
     public void destacar() {

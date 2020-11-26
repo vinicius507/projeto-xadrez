@@ -37,8 +37,9 @@ public class JanelaPrincipal extends JFrame {
         }
         else {
             casaClicadaDestino = casaClicada;
+            boolean pecasDiferentes = casaClicadaOrigem.getCorPeca() != casaClicadaDestino.getCorPeca();
             jogo.moverPeca(casaClicadaOrigem.getPosicaoX(), casaClicadaOrigem.getPosicaoY(),
-                    casaClicadaDestino.getPosicaoX(), casaClicadaDestino.getPosicaoY());
+                    casaClicadaDestino.getPosicaoX(), casaClicadaDestino.getPosicaoY(), pecasDiferentes);
             casaClicadaOrigem.atenuar();
             primeiroClique = true;
             atualizar();

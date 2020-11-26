@@ -129,8 +129,6 @@ public class TabuleiroGUI extends JPanel {
                         case Peca.CAVALO_BRANCO:
                             casaGUI.desenharCavaloBranco();
                             break;
-    
-
                     }
                 }
                 else {

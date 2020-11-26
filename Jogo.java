@@ -127,11 +127,11 @@ public class Jogo {
      */
 
     // Fazer as verificações de movimento dentro do moverPeça
-    public void moverPeca(int origemX, int origemY, int destinoX, int destinoY) {
+    public void moverPeca(int origemX, int origemY, int destinoX, int destinoY, boolean pecasDiferentes) {
         Casa origem = tabuleiro.getCasa(origemX, origemY);
         Casa destino = tabuleiro.getCasa(destinoX, destinoY);
         Peca peca = origem.getPeca();
-        if(valido(origemX, origemY, destinoX, destinoY, peca)){
+        if(pecasDiferentes && valido(origemX, origemY, destinoX, destinoY, peca)){
             peca.mover(destino);
         }
     }
