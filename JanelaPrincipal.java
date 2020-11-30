@@ -17,6 +17,7 @@ public class JanelaPrincipal extends JFrame {
     private boolean primeiroClique;
     private CasaGUI casaClicadaOrigem;
     private CasaGUI casaClicadaDestino;
+    private int turno = 0; //0 para o jogador brando, 1 para o jogador preto.
     
     /**
      * Responde aos cliques realizados no tabuleiro.
@@ -27,8 +28,13 @@ public class JanelaPrincipal extends JFrame {
         if (primeiroClique) {
             if (casaClicada.possuiPeca()) {
                 casaClicadaOrigem = casaClicada;
-                casaClicadaOrigem.destacar();
-                primeiroClique = false;
+                if (casaClicadaOrigem.getCorPeca() == turno){
+                    casaClicadaOrigem.destacar();
+                    primeiroClique = false;
+                } else {
+                    String jogador = turno == 0 ? "branco." : "preto.";
+                    JOptionPane.showMessageDialog(this, "Turno do jogador " + jogador);
+                }
             }
             else {
                 // clicou em uma posi�?o inv�lida, ent?o n?o faz nada.
@@ -37,15 +43,17 @@ public class JanelaPrincipal extends JFrame {
         }
         else {
             casaClicadaDestino = casaClicada;
+            boolean jogadaConcluida;
             if (casaClicadaDestino.possuiPeca()) {
                 boolean pecasDiferentes = casaClicadaOrigem.getCorPeca() != casaClicadaDestino.getCorPeca();
-                jogo.consumirPeca(casaClicadaOrigem.getPosicaoX(), casaClicadaOrigem.getPosicaoY(),
+                jogadaConcluida = jogo.consumirPeca(casaClicadaOrigem.getPosicaoX(), casaClicadaOrigem.getPosicaoY(),
                                   casaClicadaDestino.getPosicaoX(), casaClicadaDestino.getPosicaoY(),
                                   pecasDiferentes);
             } else {
-                jogo.moverPeca(casaClicadaOrigem.getPosicaoX(), casaClicadaOrigem.getPosicaoY(),
+                jogadaConcluida = jogo.moverPeca(casaClicadaOrigem.getPosicaoX(), casaClicadaOrigem.getPosicaoY(),
                                casaClicadaDestino.getPosicaoX(), casaClicadaDestino.getPosicaoY());
             }
+            turno = jogadaConcluida ? turno==0 ? 1:0 : turno;
             casaClicadaOrigem.atenuar();
             primeiroClique = true;
             atualizar();
