@@ -1,81 +1,31 @@
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-/**
- * Tela do jogo.
- * Respons�vel por reagir aos cliques feitos pelo jogador.
- * 
- * @author Alan Moraes &lt;alan@ci.ufpb.br&gt;
- * @author Leonardo Villeth &lt;lvilleth@cc.ci.ufpb.br&gt;
- */
-public class JanelaPrincipal extends JFrame {
+public class MainView extends JFrame {
+    private Game game;
 
-    private Jogo jogo;
-    private boolean primeiroClique;
-    private CasaGUI casaClicadaOrigem;
-    private CasaGUI casaClicadaDestino;
-    private int turno = 0; //0 para o jogador brando, 1 para o jogador preto.
-    
-    /**
-     * Responde aos cliques realizados no tabuleiro.
-     * 
-     * @param casaClicada Casa que o jogador clicou.
-     */
-    public void reagir(CasaGUI casaClicada) {
-        if (primeiroClique) {
-            if (casaClicada.possuiPeca()) {
-                casaClicadaOrigem = casaClicada;
-                if (casaClicadaOrigem.getCorPeca() == turno){
-                    casaClicadaOrigem.destacar();
-                    primeiroClique = false;
-                } else {
-                    String jogador = turno == 0 ? "branco." : "preto.";
-                    JOptionPane.showMessageDialog(this, "Turno do jogador " + jogador);
-                }
-            }
-            else {
-                // clicou em uma posi�?o inv�lida, ent?o n?o faz nada.
-                JOptionPane.showMessageDialog(this, "Clique em uma peça.");
-            }
-        }
-        else {
-            casaClicadaDestino = casaClicada;
-            boolean jogadaConcluida;
-            if (casaClicadaDestino.possuiPeca()) {
-                boolean pecasDiferentes = casaClicadaOrigem.getCorPeca() != casaClicadaDestino.getCorPeca();
-                jogadaConcluida = jogo.consumirPeca(casaClicadaOrigem.getPosicaoX(), casaClicadaOrigem.getPosicaoY(),
-                                  casaClicadaDestino.getPosicaoX(), casaClicadaDestino.getPosicaoY(),
-                                  pecasDiferentes);
-            } else {
-                jogadaConcluida = jogo.moverPeca(casaClicadaOrigem.getPosicaoX(), casaClicadaOrigem.getPosicaoY(),
-                               casaClicadaDestino.getPosicaoX(), casaClicadaDestino.getPosicaoY());
-            }
-            turno = jogadaConcluida ? turno==0 ? 1:0 : turno;
-            casaClicadaOrigem.atenuar();
-            primeiroClique = true;
-            atualizar();
-        }
-    }
-    
+    private boolean firstClick;
 
-    /**
-     * Construtor da classe.
-     */
-    public JanelaPrincipal() {
+    private SquareView squareOrigin;
+    private SquareView squareTarget;
+
+    private int turno = 0; // 0 para o jogador brando, 1 para o jogador preto.
+    
+    public MainView() {
         initComponents();
 
-        this.primeiroClique = true;
-        this.casaClicadaOrigem = null;
-        this.casaClicadaDestino = null;
-        criarNovoJogo();
+        this.firstClick = true;
+        this.squareOrigin = null;
+        this.squareTarget = null;
+
+        createNewGame();
 
         // configura action listener para o menu novo
         menuNovo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                criarNovoJogo();
+                createNewGame();
             }
         });
 
@@ -92,22 +42,56 @@ public class JanelaPrincipal extends JFrame {
         super.pack();
     }
 
-    
+    private void createNewGame() {
+        if(!firstClick) {
+            firstClick = true;
+            squareOrigin.soften();
+        }            
 
-    /**
-     * Cria um novo jogo e atualiza o tabuleiro gr�fico.
-     */
-    private void criarNovoJogo() {
-        if(!primeiroClique) {
-            primeiroClique = true;
-            casaClicadaOrigem.atenuar();
-        }               
-        jogo = new Jogo();
-        atualizar();
+        game = new Game();
+        update();
     }
 
-    private void atualizar() {
-        tabuleiroGUI.atualizar(jogo);
+    private void update() {
+        tabuleiroGUI.update(game);
+    }
+
+    public void interact(SquareView clickedSquareView) {
+        if (firstClick) {
+            if (clickedSquareView.hasPiece()) {
+                squareOrigin = clickedSquareView;
+
+                if (squareOrigin.getPieceColor() == turno) {
+                    squareOrigin.highliht();
+                    firstClick = false;
+                } else {
+                    JOptionPane.showMessageDialog(this, "Turno do jogador " + (turno == 0 ? "branco." : "preto."));
+                }
+            }
+            else {
+                JOptionPane.showMessageDialog(this, "Clique em uma peça.");
+            }
+        }
+        else {
+            boolean finished = false;
+
+            squareTarget = clickedSquareView;
+
+            if (squareTarget.hasPiece()) {
+                if (squareOrigin.getPieceColor() != squareTarget.getPieceColor()) {
+                    finished = game.capturePiece(squareOrigin.getBoardLocation(), squareTarget.getBoardLocation());
+                }
+            } else {
+                finished = game.movePiece(squareOrigin.getBoardLocation(), squareTarget.getBoardLocation());
+            }
+
+            turno = finished ? turno == 0 ? 1 : 0 : turno;
+
+            squareOrigin.soften();
+            
+            firstClick = true;
+            update();
+        }
     }
 
     /**
@@ -137,7 +121,7 @@ public class JanelaPrincipal extends JFrame {
         lbl_f = new javax.swing.JLabel();
         lbl_g = new javax.swing.JLabel();
         lbl_h = new javax.swing.JLabel();
-        tabuleiroGUI = new TabuleiroGUI(this);
+        tabuleiroGUI = new BoardView(this);
         jMenuBar1 = new javax.swing.JMenuBar();
         menuArquivo = new javax.swing.JMenu();
         menuNovo = new javax.swing.JMenuItem();
@@ -281,7 +265,7 @@ public class JanelaPrincipal extends JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new JanelaPrincipal().setVisible(true);
+                new MainView().setVisible(true);
             }
         });
     }
@@ -310,7 +294,7 @@ public class JanelaPrincipal extends JFrame {
     private javax.swing.JMenuItem menuSair;
     private javax.swing.JPanel pnlColunas;
     private javax.swing.JPanel pnlLinhas;
-    private TabuleiroGUI tabuleiroGUI;
+    private BoardView tabuleiroGUI;
     // End of variables declaration//GEN-END:variables
 
 }
