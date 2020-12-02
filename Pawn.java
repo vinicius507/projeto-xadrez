@@ -2,8 +2,8 @@
  * Representa a peça Bispo.
  */
 public class Pawn extends Piece {
-    public Pawn(Board board, Point location, PieceStyle style) {
-        super(board, location, PieceType.Pawn, style);
+    public Pawn(Board board, Point position, PieceStyle style) {
+        super(board, position, PieceType.Pawn, style);
     }
     
     @Override
@@ -18,9 +18,9 @@ public class Pawn extends Piece {
             int sign = Integer.signum(to.getX() - from.getX());
 
             for (int i = 1; i < Math.abs(to.getX() - from.getX()); i++) {
-                Point location = new Point(from.getX() + (i * sign), from.getY() + (tan * i * sign));
+                Point position = new Point(from.getX() + (i * sign), from.getY() + (tan * i * sign));
 
-                if (board.getSquare(location).hasPiece()) {
+                if (board.getSquare(position).hasPiece()) {
                    return false;
                 }
             }

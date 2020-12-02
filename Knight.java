@@ -2,8 +2,8 @@
  * Representa a peça Cavalo.
  */
 public class Knight extends Piece {
-    public Knight(Board board, Point location, PieceStyle style) {
-        super(board, location, PieceType.Knight, style);
+    public Knight(Board board, Point position, PieceStyle style) {
+        super(board, position, PieceType.Knight, style);
     }
     
     @Override

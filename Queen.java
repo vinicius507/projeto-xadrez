@@ -2,8 +2,8 @@
  * Representa a peça Rainha.
  */
 public class Queen extends Piece {
-    public Queen(Board board, Point location, PieceStyle style) {
-        super(board, location, PieceType.Queen, style);
+    public Queen(Board board, Point position, PieceStyle style) {
+        super(board, position, PieceType.Queen, style);
     }
     
     @Override
@@ -18,9 +18,9 @@ public class Queen extends Piece {
             int sign = Integer.signum(to.getY() - from.getY());
 
             for (int i = 1; i < Math.abs(to.getY() - from.getY()); i++) {
-                Point location = new Point(from.getX(), from.getY() + (i * sign));
+                Point position = new Point(from.getX(), from.getY() + (i * sign));
 
-                if (board.getSquare(location).hasPiece()) {
+                if (board.getSquare(position).hasPiece()) {
                    return false;
                 }
             } 
@@ -28,9 +28,9 @@ public class Queen extends Piece {
             int sign = Integer.signum(to.getX() - from.getX());
 
             for (int i = 1; i < Math.abs(to.getX() - from.getX()); i++) {
-                Point location = new Point(from.getX() + (i * sign), from.getY());
+                Point position = new Point(from.getX() + (i * sign), from.getY());
 
-                if (board.getSquare(location).hasPiece()) {
+                if (board.getSquare(position).hasPiece()) {
                     return false;
                 }
             }
@@ -39,9 +39,9 @@ public class Queen extends Piece {
             int sign = Integer.signum(to.getX() - from.getX());
 
             for (int i = 1; i < Math.abs(to.getX() - from.getX()); i++) {
-                Point location = new Point(from.getX() + (i * sign), from.getY() + (tan * i * sign));
+                Point position = new Point(from.getX() + (i * sign), from.getY() + (tan * i * sign));
 
-                if (board.getSquare(location).hasPiece()) {
+                if (board.getSquare(position).hasPiece()) {
                     return false;
                 }
             }

@@ -2,8 +2,8 @@
  * Representa a peça Torre.
  */
 public class Rook extends Piece {
-    public Rook(Board board, Point location, PieceStyle style) {
-        super(board, location, PieceType.Rook, style);
+    public Rook(Board board, Point position, PieceStyle style) {
+        super(board, position, PieceType.Rook, style);
     }
 
     @Override
@@ -17,9 +17,9 @@ public class Rook extends Piece {
             int sign = Integer.signum(to.getY() - from.getY());
 
             for (int i = 1; i < Math.abs(to.getY() - from.getY()); i++) {
-                Point location = new Point(from.getX(), from.getY() + (i * sign));
+                Point position = new Point(from.getX(), from.getY() + (i * sign));
                 
-                if (board.getSquare(location).hasPiece()) {
+                if (board.getSquare(position).hasPiece()) {
                     return false;
                 }
             }
@@ -27,9 +27,9 @@ public class Rook extends Piece {
             int sign = Integer.signum(to.getX() - from.getX());
             
             for (int i = 1; i < Math.abs(to.getX() - from.getX()); i++) {
-                Point location = new Point(from.getX() + (i * sign), from.getY());
+                Point position = new Point(from.getX() + (i * sign), from.getY());
 
-                if (board.getSquare(location).hasPiece()) {
+                if (board.getSquare(position).hasPiece()) {
                     return false;
                 }
             }

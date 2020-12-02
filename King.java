@@ -2,8 +2,8 @@
  * Representa a peça Rei.
  */
 public class King extends Piece {
-    public King(Board board, Point location, PieceStyle style) {
-        super(board, location, PieceType.King, style);
+    public King(Board board, Point position, PieceStyle style) {
+        super(board, position, PieceType.King, style);
     }
     
     @Override
