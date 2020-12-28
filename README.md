@@ -3,6 +3,12 @@ Projeto desenvolvido para a disciplina de Linguagem de Programação I pela Univ
 
 Project developed for the class Programming Language I at Federal University of Paraíba(UFPB) for the Computer Science Bachelor's Course.
 
+ABOUT
+----
+Desenvolvido usando [BlueJ](https://www.bluej.org/).
+
+Developed using [BlueJ](https://www.bluej.org/).
+
 AUTHORS
 ----
 Vinícius Gonçalves de Oliveira([Github](https://github.com/vinicius507))
